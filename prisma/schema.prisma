@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Weather {
+  id                      Int             @id @default(autoincrement())
+  city                    String          @unique
+  temperature             Int
+  feelsLike               Int
+  condition               String
+  humidity                Int
+  windSpeed               Int
+  windDirection           String
+  uvIndex                 Float
+  precipitationProbability Int
+  
+  // Air Quality fields
+  airQualityAqi           Int
+  airQualityCategory      String
+  airQualityColor         String
+  airQualityPm25          Float
+  airQualityPm10          Float
+  airQualityCo            Float
+  airQualityNo2           Float
+  airQualityO3            Float
+  airQualitySo2           Float
+  
+  timezone                String
+  alerts                  String?  // JSON stringified
+  lastUpdated             DateTime @default(now())
+  forecasts               DailyForecast[]
+}
+
+model DailyForecast {
+  id                      Int      @id @default(autoincrement())
+  weatherId               Int
+  weather                 Weather  @relation(fields: [weatherId], references: [id], onDelete: Cascade)
+  date                    DateTime
+  minTemp                 Int
+  maxTemp                 Int
+  condition               String
+  humidity                Int
+  windSpeed               Int
+  uvIndex                 Float
+  precipitationProbability Int
+
+  @@index([weatherId])
+}
+
